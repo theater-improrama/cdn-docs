@@ -1,8 +1,8 @@
 baseURL: https://cdn.improrama.de/
 defaultContentLanguage: de
 defaultContentLanguageInSubdir: true
-
 enableGitInfo: true
+enableRobotsTXT: true
 
 languages:
   de:
