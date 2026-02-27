@@ -9,7 +9,7 @@ We provide publicly accessible icons for GTA V vehicles and clothing. The icons 
 
 All images, icons, etc. provided by us are licensed under [CC BY 4.0](/licenses/cc-by-4.0-intl.txt).
 
-These icons are created through volunteer work – as a non-profit organization, we are funded exclusively through donations. In order to sustain this offering long-term, we depend on visibility. Therefore, attribution is a requirement for usage: for example in an "About" section, a license page or a listing of third-party resources within the application. If a project website exists, attribution should be included there as well. A permanent on-screen display is not necessary – it is sufficient that users are able to find the information.
+These icons are created through volunteer work – as a non-profit organization, we are funded exclusively through donations. In order to sustain this offering long-term, we depend on visibility. Therefore, attribution is a requirement for usage: for example in an "About" section or a license page. If a project website exists, attribution should be included there as well.
 
 We kindly ask you to use the following details for attribution:
 

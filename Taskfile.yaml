@@ -7,7 +7,7 @@ tasks:
       - git push --follow-tags origin main
   build-production:
     cmds:
-      - hugo --gc --minify --baseURL "https://dev.improfans.de/"
+      - hugo --gc --minify --baseURL "https://cdn.improrama.de/"
   serve:
     cmds:
       - hugo server --buildDrafts --disableFastRender
