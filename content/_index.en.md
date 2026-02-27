@@ -6,8 +6,6 @@ cascade:
 next: gtav
 ---
 
-# CDN Docs
-
 Here you can find the Improrama CDN documentation.
 
 {{< cards >}}
