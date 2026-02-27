@@ -1,0 +1,6 @@
+{
+    "commitUrlFormat": "{{host}}/theater-improrama/cdn-docs/commit/{{hash}}",
+    "compareUrlFormat": "{{host}}/theater-improrama/cdn-docs/compare/{{previousTag}}...{{currentTag}}",
+    "issueUrlFormat": "{{host}}/theater-improrama/cdn-docs/issues/{{id}}",
+    "userUrlFormat": "{{host}}/{{user}}"
+}
