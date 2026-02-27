@@ -8,18 +8,18 @@ languages:
   de:
     languageCode: de-DE
     languageName: Deutsch
-    title: CDN Docs
+    title: Theater Improrama CDN
     weight: 0
     menu:
       main:
-        - name: Theater Improrama
+        - name: Über uns
           url: https://improrama.de
           weight: 2
         - name: Impressum
           url: https://improrama.de/impressum.html
           weight: 3
         - name: Datenschutzerklärung
-          url: https://improrama.de/datenschutz.html
+          url: https://improrama.de/datenschutzerklaerung.html
           weight: 4
         - name: Suche
           weight: 5
@@ -33,18 +33,18 @@ languages:
   en:
     languageCode: en-US
     languageName: English
-    title: CDN Documentation
+    title: Theater Improrama CDN
     weight: 1
     menu:
       main:
-        - name: Theater Improrama
+        - name: About
           url: https://improrama.de
           weight: 2
         - name: Imprint
           url: https://improrama.de/impressum.html
           weight: 3
         - name: Privacy Policy
-          url: https://improrama.de/datenschutz.html
+          url: https://improrama.de/datenschutzerklaerung.html
           weight: 4
         - name: Search
           weight: 5
