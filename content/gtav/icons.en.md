@@ -85,7 +85,7 @@ https://cdn.improrama.de/assets/gta5/clothing/icons/11/0/39/1/256x.png
 https://cdn.improrama.de/assets/gta5/vehicle/icons/{hash}/{size}x.png
 ```
 
-Each vehicle model in GTA V is internally identified by a numeric hash. This hash is computed from the vehicle's spawn name and serves as a unique key in the URL.
+Each vehicle model in GTA V is internally identified by a numeric hash. This hash is computed from the vehicle's spawn name and serves as a unique key in the URL. The hash is an **unsigned 32-bit integer** (`uint32`). Native functions like `GET_HASH_KEY` may return a signed value (`int32`) in some environments – this must be converted to `uint32` before use in the URL (e.g. `hash >>> 0` in JavaScript).
 
 #### Parameters
 
