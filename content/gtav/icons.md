@@ -15,11 +15,24 @@ Wir bitten darum, zur Namensnennung folgende Angaben zu verwenden:
 
 > **Theater Improrama gUG** – [https://improrama.de/](https://improrama.de/)
 
+## Viewer
+
+{{< icon-viewer >}}
+
 ## Nutzung unserer CDN-Icons
 
 Die Gesamtgröße der von uns erstellten Icons beträgt ca. 6 GB und wird in vier Auflösungen bereitgestellt: **64px**, **128px**, **256px** und **512px**. Alle Icons sind im PNG-Format verfügbar.
 
 Die Parameter in den URLs entsprechen den Werten, die auch in den GTA V Native Functions verwendet werden. Eine vollständige Referenz aller Native Functions findest du unter [docs.fivem.net/natives](https://docs.fivem.net/natives/).
+
+### Vollständiger Download
+
+Alle Icons stehen auch als ZIP-Archive zum Offline-Gebrauch zur Verfügung:
+
+| Archiv | Prüfsumme |
+|---|---|
+| [clothing.zip](https://cdn.improrama.de/assets/gta5/clothing.zip) | [clothing.zip.sha256](https://cdn.improrama.de/assets/gta5/clothing.zip.sha256) |
+| [vehicle.zip](https://cdn.improrama.de/assets/gta5/vehicle.zip) | [vehicle.zip.sha256](https://cdn.improrama.de/assets/gta5/vehicle.zip.sha256) |
 
 ---
 
@@ -84,14 +97,18 @@ Jedes Fahrzeugmodell in GTA V wird intern durch einen numerischen Hash identifiz
 #### Beispiel
 
 ```
-https://cdn.improrama.de/assets/gta5/vehicle/icons/3078201489/256x.png
+https://cdn.improrama.de/assets/gta5/vehicle/icons/2891838741/256x.png
 ```
 
-→ Fahrzeug-Icon für den Hash `3078201489` (`zentorno`) in 256px.
+→ Fahrzeug-Icon für den Hash `2891838741` (`zentorno`) in 256px.
 
-![Beispiel: Fahrzeug-Icon](https://cdn.improrama.de/assets/gta5/vehicle/icons/3078201489/256x.png)
+![Beispiel: Fahrzeug-Icon](https://cdn.improrama.de/assets/gta5/vehicle/icons/2891838741/256x.png)
 
 ---
+
+{{< callout type="info" >}}
+Nutze den [Icon Viewer](../icon-viewer), um Icons direkt im Browser anzusehen.
+{{< /callout >}}
 
 {{< callout >}}
 Fehlende Icons? Erstelle ein Issue auf [GitHub](https://github.com/theater-improrama/cdn-docs/issues).

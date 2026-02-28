@@ -1,0 +1,579 @@
+{{ $lang := .Page.Language.Lang }}
+{{ $isEn := eq $lang "en" }}
+
+<style>
+.icon-viewer {
+  font-family: inherit;
+}
+.icon-viewer .iv-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--border-color, #e5e7eb);
+  margin-bottom: 1.5rem;
+}
+.icon-viewer .iv-tab {
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary, #6b7280);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.icon-viewer .iv-tab:hover {
+  color: var(--text-primary, #111827);
+}
+.icon-viewer .iv-tab.active {
+  color: var(--primary-color, #3b82f6);
+  border-bottom-color: var(--primary-color, #3b82f6);
+}
+.icon-viewer .iv-panel {
+  display: none;
+}
+.icon-viewer .iv-panel.active {
+  display: block;
+}
+.icon-viewer .iv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .icon-viewer .iv-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.icon-viewer .iv-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.icon-viewer .iv-field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--text-primary, #111827);
+}
+.icon-viewer .iv-field select,
+.icon-viewer .iv-field input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: 0.375rem;
+  font-size: 0.9rem;
+  background: var(--bg-secondary, #fff);
+  color: var(--text-primary, #111827);
+  box-sizing: border-box;
+}
+.icon-viewer .iv-field select:focus,
+.icon-viewer .iv-field input:focus {
+  outline: none;
+  border-color: var(--primary-color, #3b82f6);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+.icon-viewer .iv-field.iv-hidden {
+  display: none;
+}
+.icon-viewer .iv-preview-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.icon-viewer .iv-preview-box {
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 320px;
+  border: 2px dashed var(--border-color, #d1d5db);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary, #f9fafb);
+  overflow: hidden;
+  position: relative;
+}
+.icon-viewer .iv-preview-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.icon-viewer .iv-preview-box .iv-placeholder {
+  color: var(--text-secondary, #9ca3af);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 1rem;
+}
+.icon-viewer .iv-preview-box .iv-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 1rem;
+}
+.icon-viewer .iv-preview-box .iv-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(249, 250, 251, 0.8);
+}
+.icon-viewer .iv-preview-box .iv-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--border-color, #e5e7eb);
+  border-top-color: var(--primary-color, #3b82f6);
+  border-radius: 50%;
+  animation: iv-spin 0.6s linear infinite;
+}
+@keyframes iv-spin {
+  to { transform: rotate(360deg); }
+}
+.icon-viewer .iv-url-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.icon-viewer .iv-url-bar input {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: 0.375rem;
+  font-size: 0.8rem;
+  font-family: monospace;
+  background: var(--bg-secondary, #fff);
+  color: var(--text-primary, #111827);
+  min-width: 0;
+}
+.icon-viewer .iv-url-bar button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: 0.375rem;
+  background: var(--bg-secondary, #fff);
+  color: var(--text-primary, #111827);
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.icon-viewer .iv-url-bar button:hover {
+  background: var(--bg-tertiary, #f3f4f6);
+}
+.icon-viewer .iv-url-bar button.copied {
+  background: #10b981;
+  color: #fff;
+  border-color: #10b981;
+}
+
+:root.dark .icon-viewer .iv-field label {
+  color: #e5e7eb;
+}
+:root.dark .icon-viewer .iv-field select,
+:root.dark .icon-viewer .iv-field input,
+:root.dark .icon-viewer .iv-url-bar input,
+:root.dark .icon-viewer .iv-url-bar button {
+  background: #1f2937;
+  border-color: #374151;
+  color: #e5e7eb;
+}
+:root.dark .icon-viewer .iv-preview-box {
+  background: #111827;
+  border-color: #374151;
+}
+:root.dark .icon-viewer .iv-preview-box .iv-loading {
+  background: rgba(17, 24, 39, 0.8);
+}
+:root.dark .icon-viewer .iv-tab {
+  color: #9ca3af;
+}
+:root.dark .icon-viewer .iv-tab:hover {
+  color: #e5e7eb;
+}
+:root.dark .icon-viewer .iv-tabs {
+  border-color: #374151;
+}
+</style>
+
+<noscript>
+  <p>{{ if $isEn }}The Icon Viewer requires JavaScript to be enabled.{{ else }}Der Icon Viewer benötigt aktiviertes JavaScript.{{ end }}</p>
+</noscript>
+<div class="icon-viewer" id="iconViewer" style="display:none;">
+  <div class="iv-tabs">
+    <button class="iv-tab active" data-tab="clothing" onclick="ivSwitchTab('clothing')">
+      {{ if $isEn }}Clothing{{ else }}Klamotten{{ end }}
+    </button>
+    <button class="iv-tab" data-tab="vehicles" onclick="ivSwitchTab('vehicles')">
+      {{ if $isEn }}Vehicles{{ else }}Fahrzeuge{{ end }}
+    </button>
+  </div>
+
+  <!-- Clothing Panel -->
+  <div class="iv-panel active" id="ivPanelClothing">
+    <div class="iv-grid">
+      <div class="iv-form">
+        <div class="iv-field">
+          <label for="ivClothingComponent">Component ID</label>
+          <select id="ivClothingComponent" onchange="ivOnComponentChange()"></select>
+        </div>
+        <div class="iv-field" id="ivSexField">
+          <label for="ivClothingSex">{{ if $isEn }}Sex{{ else }}Geschlecht{{ end }}</label>
+          <select id="ivClothingSex" onchange="ivOnSexChange()"></select>
+        </div>
+        <div class="iv-field">
+          <label for="ivClothingDrawable">Drawable ID</label>
+          <select id="ivClothingDrawable" onchange="ivOnDrawableChange()"></select>
+        </div>
+        <div class="iv-field">
+          <label for="ivClothingTexture">Texture ID</label>
+          <select id="ivClothingTexture" onchange="ivUpdateClothing()"></select>
+        </div>
+        <div class="iv-field">
+          <label for="ivClothingSize">{{ if $isEn }}Size{{ else }}Größe{{ end }}</label>
+          <select id="ivClothingSize" onchange="ivUpdateClothing()">
+            <option value="64">64px</option>
+            <option value="128">128px</option>
+            <option value="256" selected>256px</option>
+            <option value="512">512px</option>
+          </select>
+        </div>
+      </div>
+      <div class="iv-preview-area">
+        <div class="iv-preview-box" id="ivClothingPreview">
+          <span class="iv-placeholder">{{ if $isEn }}Loading index...{{ else }}Index wird geladen...{{ end }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="iv-url-bar">
+      <input type="text" id="ivClothingUrl" disabled readonly placeholder="URL" />
+      <button onclick="ivCopyUrl('ivClothingUrl', this)">{{ if $isEn }}Copy{{ else }}Kopieren{{ end }}</button>
+    </div>
+  </div>
+
+  <!-- Vehicles Panel -->
+  <div class="iv-panel" id="ivPanelVehicles">
+    <div class="iv-grid">
+      <div class="iv-form">
+        <div class="iv-field">
+          <label for="ivVehicleHash">{{ if $isEn }}Vehicle Hash{{ else }}Fahrzeug-Hash{{ end }}</label>
+          <select id="ivVehicleHash" onchange="ivUpdateVehicle()"></select>
+        </div>
+        <div class="iv-field">
+          <label for="ivVehicleSize">{{ if $isEn }}Size{{ else }}Größe{{ end }}</label>
+          <select id="ivVehicleSize" onchange="ivUpdateVehicle()">
+            <option value="64">64px</option>
+            <option value="128">128px</option>
+            <option value="256" selected>256px</option>
+            <option value="512">512px</option>
+          </select>
+        </div>
+      </div>
+      <div class="iv-preview-area">
+        <div class="iv-preview-box" id="ivVehiclePreview">
+          <span class="iv-placeholder">{{ if $isEn }}Loading index...{{ else }}Index wird geladen...{{ end }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="iv-url-bar">
+      <input type="text" id="ivVehicleUrl" disabled readonly placeholder="URL" />
+      <button onclick="ivCopyUrl('ivVehicleUrl', this)">{{ if $isEn }}Copy{{ else }}Kopieren{{ end }}</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  document.getElementById('iconViewer').style.display = '';
+
+  var i18n = {{ if $isEn }}{
+    errorText: "Icon not found. Check your parameters.",
+    copied: "Copied!",
+    loading: "Loading index..."
+  }{{ else }}{
+    errorText: "Icon nicht gefunden. Überprüfe die Parameter.",
+    copied: "Kopiert!",
+    loading: "Index wird geladen..."
+  }{{ end }};
+
+  var CDN = "https://cdn.improrama.de";
+  var CLOTHING_INDEX_URL = CDN + "/assets/gta5/clothing/icons/index.txt";
+  var VEHICLE_INDEX_URL = CDN + "/assets/gta5/vehicle/icons/index.txt";
+  var VEHICLE_NAMES_URL = CDN + "/assets/gta5/vehicle/icons/names.txt";
+
+  // Components where sex field should be hidden
+  var HIDE_SEX_COMPONENTS = [1, 5];
+
+  // Parsed index data
+  // clothingData[comp][sex] = { drawableCount: N, textures: { drawableId: textureCount } }
+  var clothingData = {};
+  var vehicleHashes = [];
+  var vehicleNames = {};
+
+  // --- Index parsing ---
+
+  function parseClothingIndex(text) {
+    var data = {};
+    var lines = text.trim().split('\n');
+    for (var i = 0; i < lines.length; i++) {
+      var parts = lines[i].trim().split('/');
+      if (parts.length === 3) {
+        var comp = parts[0], sex = parts[1], count = parseInt(parts[2], 10);
+        if (!data[comp]) data[comp] = {};
+        data[comp][sex] = { drawableCount: count, textures: {} };
+      } else if (parts.length === 4) {
+        var comp = parts[0], sex = parts[1], drawable = parts[2], tCount = parseInt(parts[3], 10);
+        if (data[comp] && data[comp][sex]) {
+          data[comp][sex].textures[drawable] = tCount;
+        }
+      }
+    }
+    return data;
+  }
+
+  function parseVehicleIndex(text) {
+    return text.trim().split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+  }
+
+  function parseVehicleNames(text) {
+    var names = {};
+    var lines = text.trim().split('\n');
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+      if (!line) continue;
+      var idx = line.indexOf(',');
+      if (idx === -1) continue;
+      var id = line.substring(0, idx).trim();
+      var name = line.substring(idx + 1).trim();
+      if (id && name) names[id] = name;
+    }
+    return names;
+  }
+
+  // --- Helpers ---
+
+  function randInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+  function randItem(arr) {
+    return arr[randInt(arr.length)];
+  }
+
+  function populateSelect(sel, values, selected) {
+    sel.innerHTML = '';
+    for (var i = 0; i < values.length; i++) {
+      var opt = document.createElement('option');
+      opt.value = values[i].value !== undefined ? values[i].value : values[i];
+      opt.textContent = values[i].label !== undefined ? values[i].label : values[i];
+      if (opt.value === String(selected)) opt.selected = true;
+      sel.appendChild(opt);
+    }
+  }
+
+  function showImage(previewEl, url) {
+    previewEl.innerHTML = '<div class="iv-loading"><div class="iv-spinner"></div></div>';
+    var img = new Image();
+    img.onload = function() {
+      previewEl.innerHTML = '';
+      previewEl.appendChild(img);
+    };
+    img.onerror = function() {
+      previewEl.innerHTML = '<span class="iv-error">' + i18n.errorText + '</span>';
+    };
+    img.src = url;
+    img.alt = "Icon preview";
+  }
+
+  // --- Clothing logic ---
+
+  function getComponents() {
+    return Object.keys(clothingData).sort(function(a, b) { return parseInt(a) - parseInt(b); });
+  }
+
+  function getSexes(comp) {
+    if (!clothingData[comp]) return [];
+    return Object.keys(clothingData[comp]).sort(function(a, b) { return parseInt(a) - parseInt(b); });
+  }
+
+  function getDrawableCount(comp, sex) {
+    if (clothingData[comp] && clothingData[comp][sex]) return clothingData[comp][sex].drawableCount;
+    return 0;
+  }
+
+  function getTextureCount(comp, sex, drawable) {
+    if (clothingData[comp] && clothingData[comp][sex] && clothingData[comp][sex].textures[drawable] !== undefined) {
+      return clothingData[comp][sex].textures[drawable];
+    }
+    return 0;
+  }
+
+  function updateSexVisibility() {
+    var comp = document.getElementById('ivClothingComponent').value;
+    var field = document.getElementById('ivSexField');
+    if (HIDE_SEX_COMPONENTS.indexOf(parseInt(comp)) !== -1) {
+      field.classList.add('iv-hidden');
+    } else {
+      field.classList.remove('iv-hidden');
+    }
+  }
+
+  function populateSexSelect(comp, selected) {
+    var sexes = getSexes(comp);
+    var sexLabels = {{ if $isEn }}{
+      '0': '0 – Male', '1': '1 – Female', '2': '2 – Other'
+    }{{ else }}{
+      '0': '0 – Männlich', '1': '1 – Weiblich', '2': '2 – Andere'
+    }{{ end }};
+    var items = sexes.map(function(s) {
+      return { value: s, label: sexLabels[s] || s };
+    });
+    populateSelect(document.getElementById('ivClothingSex'), items, selected !== undefined ? selected : sexes[0]);
+  }
+
+  function populateDrawableSelect(comp, sex, selected) {
+    var count = getDrawableCount(comp, sex);
+    var items = [];
+    for (var i = 0; i < count; i++) items.push(String(i));
+    populateSelect(document.getElementById('ivClothingDrawable'), items, selected !== undefined ? selected : '0');
+  }
+
+  function populateTextureSelect(comp, sex, drawable, selected) {
+    var count = getTextureCount(comp, sex, drawable);
+    var items = [];
+    for (var i = 0; i < count; i++) items.push(String(i));
+    populateSelect(document.getElementById('ivClothingTexture'), items, selected !== undefined ? selected : '0');
+  }
+
+  window.ivOnComponentChange = function() {
+    var comp = document.getElementById('ivClothingComponent').value;
+    updateSexVisibility();
+    populateSexSelect(comp);
+    ivOnSexChange();
+  };
+
+  window.ivOnSexChange = function() {
+    var comp = document.getElementById('ivClothingComponent').value;
+    var sex = document.getElementById('ivClothingSex').value;
+    populateDrawableSelect(comp, sex);
+    ivOnDrawableChange();
+  };
+
+  window.ivOnDrawableChange = function() {
+    var comp = document.getElementById('ivClothingComponent').value;
+    var sex = document.getElementById('ivClothingSex').value;
+    var drawable = document.getElementById('ivClothingDrawable').value;
+    populateTextureSelect(comp, sex, drawable);
+    ivUpdateClothing();
+  };
+
+  window.ivUpdateClothing = function() {
+    var comp = document.getElementById('ivClothingComponent').value;
+    var sex = document.getElementById('ivClothingSex').value;
+    var drawable = document.getElementById('ivClothingDrawable').value;
+    var texture = document.getElementById('ivClothingTexture').value;
+    var size = document.getElementById('ivClothingSize').value;
+    if (!comp || !drawable || texture === '') return;
+    var url = CDN + "/assets/gta5/clothing/icons/" + comp + "/" + sex + "/" + drawable + "/" + texture + "/" + size + "x.png";
+    document.getElementById('ivClothingUrl').value = url;
+    showImage(document.getElementById('ivClothingPreview'), url);
+  };
+
+  function initClothingRandom() {
+    var components = getComponents();
+    if (!components.length) return;
+    var comp = randItem(components);
+    var sexes = getSexes(comp);
+    var sex = randItem(sexes);
+    var drawableCount = getDrawableCount(comp, sex);
+    var drawable = String(randInt(drawableCount));
+    var textureCount = getTextureCount(comp, sex, drawable);
+    var texture = textureCount > 0 ? String(randInt(textureCount)) : '0';
+
+    var compLabels = {{ if $isEn }}{
+      '1': '1 – Mask', '4': '4 – Pants', '5': '5 – Parachute / Bag',
+      '6': '6 – Shoes', '7': '7 – Accessory', '8': '8 – Undershirt',
+      '9': '9 – Body Armor', '11': '11 – Torso 2'
+    }{{ else }}{
+      '1': '1 – Maske', '4': '4 – Hose', '5': '5 – Fallschirm / Rucksack',
+      '6': '6 – Schuhe', '7': '7 – Accessoire', '8': '8 – Unterhemd',
+      '9': '9 – Körperpanzerung', '11': '11 – Oberkörper'
+    }{{ end }};
+    var compItems = components.map(function(c) {
+      return { value: c, label: compLabels[c] || c };
+    });
+    populateSelect(document.getElementById('ivClothingComponent'), compItems, comp);
+
+    updateSexVisibility();
+    populateSexSelect(comp, sex);
+    populateDrawableSelect(comp, sex, drawable);
+    populateTextureSelect(comp, sex, drawable, texture);
+    ivUpdateClothing();
+  }
+
+  // --- Vehicle logic ---
+
+  window.ivUpdateVehicle = function() {
+    var hash = document.getElementById('ivVehicleHash').value;
+    var size = document.getElementById('ivVehicleSize').value;
+    if (!hash) return;
+    var url = CDN + "/assets/gta5/vehicle/icons/" + hash + "/" + size + "x.png";
+    document.getElementById('ivVehicleUrl').value = url;
+    showImage(document.getElementById('ivVehiclePreview'), url);
+  };
+
+  function initVehicleRandom() {
+    if (!vehicleHashes.length) return;
+    var hash = randItem(vehicleHashes);
+    var items = vehicleHashes.map(function(h) {
+      var label = vehicleNames[h] ? h + ' \u2013 ' + vehicleNames[h] : h;
+      return { value: h, label: label };
+    });
+    populateSelect(document.getElementById('ivVehicleHash'), items, hash);
+    ivUpdateVehicle();
+  }
+
+  // --- Tabs ---
+
+  window.ivSwitchTab = function(tab) {
+    document.querySelectorAll('.iv-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.iv-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+    document.getElementById(tab === 'clothing' ? 'ivPanelClothing' : 'ivPanelVehicles').classList.add('active');
+  };
+
+  // --- Copy ---
+
+  window.ivCopyUrl = function(inputId, btn) {
+    var input = document.getElementById(inputId);
+    if (!input.value) return;
+    navigator.clipboard.writeText(input.value).then(function() {
+      var orig = btn.textContent;
+      btn.textContent = i18n.copied;
+      btn.classList.add('copied');
+      setTimeout(function() {
+        btn.textContent = orig;
+        btn.classList.remove('copied');
+      }, 1500);
+    });
+  };
+
+  // --- Init ---
+
+  Promise.all([
+    fetch(CLOTHING_INDEX_URL).then(function(r) { return r.text(); }),
+    fetch(VEHICLE_INDEX_URL).then(function(r) { return r.text(); }),
+    fetch(VEHICLE_NAMES_URL).then(function(r) { return r.ok ? r.text() : ''; }).catch(function() { return ''; })
+  ]).then(function(results) {
+    clothingData = parseClothingIndex(results[0]);
+    vehicleHashes = parseVehicleIndex(results[1]);
+    vehicleNames = parseVehicleNames(results[2]);
+    initClothingRandom();
+    initVehicleRandom();
+  });
+})();
+</script>
